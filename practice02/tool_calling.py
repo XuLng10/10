@@ -131,6 +131,17 @@ def parse_tool_call(response: str) -> Dict[str, Any]:
         包含工具名称和参数的字典，如果解析失败返回None
     """
     try:
+        # 先尝试从```json块中提取
+        json_start = response.find("```json")
+        if json_start != -1:
+            json_end = response.find("```", json_start + 7)
+            if json_end != -1:
+                json_str = response[json_start + 7:json_end].strip()
+                parsed = json.loads(json_str)
+                if "tool" in parsed and "args" in parsed:
+                    return parsed
+        
+        # 如果没有```json块，尝试直接查找JSON
         start = response.find("{")
         end = response.rfind("}") + 1
         
