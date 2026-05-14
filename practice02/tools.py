@@ -134,7 +134,7 @@ def delete_file(file_path: str) -> str:
         return f"删除文件失败: {str(e)}"
 
 
-def create_file(directory: str, file_name: str, content: str) -> str:
+def create_file(directory: str, file_name: str, content: str, overwrite: bool = False) -> str:
     """
     在指定目录下创建新文件并写入内容
     
@@ -142,6 +142,7 @@ def create_file(directory: str, file_name: str, content: str) -> str:
         directory: 目标目录路径
         file_name: 新文件名
         content: 要写入的内容
+        overwrite: 如果文件已存在，是否覆盖（默认False）
         
     Returns:
         操作结果消息
@@ -152,13 +153,16 @@ def create_file(directory: str, file_name: str, content: str) -> str:
         
         full_path = os.path.join(directory, file_name)
         
-        if os.path.exists(full_path):
-            return f"错误: 文件 '{full_path}' 已存在"
+        if os.path.exists(full_path) and not overwrite:
+            return f"错误: 文件 '{full_path}' 已存在，若需覆盖请设置 overwrite=True"
         
         with open(full_path, 'w', encoding='utf-8') as f:
             f.write(content)
         
-        return f"成功: 文件 '{full_path}' 已创建，写入了 {len(content)} 个字符"
+        if overwrite and os.path.exists(full_path):
+            return f"成功: 文件 '{full_path}' 已覆盖，写入了 {len(content)} 个字符"
+        else:
+            return f"成功: 文件 '{full_path}' 已创建，写入了 {len(content)} 个字符"
     
     except Exception as e:
         return f"创建文件失败: {str(e)}"
@@ -225,12 +229,13 @@ def get_tools_description() -> str:
    - 参数：file_path - 要删除的文件路径（字符串）
    - 返回：操作结果消息
 
-4. create_file(directory: str, file_name: str, content: str)
+4. create_file(directory: str, file_name: str, content: str, overwrite: bool = False)
    - 功能：在指定目录下创建新文件并写入内容
    - 参数：
      - directory - 目标目录路径（字符串）
      - file_name - 新文件名（字符串）
      - content - 要写入的内容（字符串）
+     - overwrite - 如果文件已存在，是否覆盖（布尔值，默认False）
    - 返回：操作结果消息
 
 5. read_file(file_path: str)

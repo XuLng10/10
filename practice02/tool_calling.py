@@ -92,12 +92,13 @@ def get_system_prompt() -> str:
    - 功能：删除指定的文件
    - 参数：file_path - 要删除的文件路径（字符串）
 
-4. create_file(directory: str, file_name: str, content: str)
+4. create_file(directory: str, file_name: str, content: str, overwrite: bool = False)
    - 功能：在指定目录下创建新文件并写入内容
    - 参数：
      - directory - 目标目录路径（字符串）
      - file_name - 新文件名（字符串）
      - content - 要写入的内容（字符串）
+     - overwrite - 如果文件已存在，是否覆盖（布尔值，默认False）
 
 5. read_file(file_path: str)
    - 功能：读取指定文件的内容
