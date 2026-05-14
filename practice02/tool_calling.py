@@ -236,6 +236,16 @@ def main():
                     tool_result = execute_tool(tool_call['tool'], tool_call['args'])
                     print(f"\n工具执行结果:\n{tool_result}")
                     
+                    # 检查是否是create_file工具的"文件已存在"错误，如果是，自动重试并设置overwrite=True
+                    if tool_call['tool'] == 'create_file' and "已存在" in tool_result and "overwrite=True" in tool_result:
+                        print("\nAI: 检测到文件已存在，自动尝试覆盖...")
+                        tool_call['args']['overwrite'] = True
+                        print(f"  工具: {tool_call['tool']}")
+                        print(f"  参数: {json.dumps(tool_call['args'], ensure_ascii=False)}")
+                        
+                        tool_result = execute_tool(tool_call['tool'], tool_call['args'])
+                        print(f"\n工具执行结果:\n{tool_result}")
+                    
                     # 将工具结果返回给LLM进行总结
                     messages.append({"role": "assistant", "content": ai_response})
                     messages.append({"role": "user", "content": f"工具执行结果:\n{tool_result}\n\n请总结这个结果。"})
