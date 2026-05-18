@@ -134,7 +134,7 @@ def get_user_input(prompt: str = "你: ") -> str:
         return ''.join(input_chars)
     except OSError:
         # Windows系统上select.select与stdin不兼容，使用简单的input()
-        return input(prompt)
+        return input()
 
 
 def main():
