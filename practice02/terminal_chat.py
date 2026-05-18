@@ -107,29 +107,34 @@ def get_user_input(prompt: str = "你: ") -> str:
     """
     从终端获取用户输入
     """
-    sys.stdout.write(prompt)
-    sys.stdout.flush()
-    
-    input_chars = []
-    while True:
-        if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
-            char = sys.stdin.read(1)
-            if char == '\n':
-                break
-            elif char == '\x7f':  # Backspace
-                if input_chars:
-                    input_chars.pop()
-                    sys.stdout.write('\b \b')
+    try:
+        # 尝试使用select方式（Unix-like系统）
+        sys.stdout.write(prompt)
+        sys.stdout.flush()
+        
+        input_chars = []
+        while True:
+            if sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+                char = sys.stdin.read(1)
+                if char == '\n':
+                    break
+                elif char == '\x7f':  # Backspace
+                    if input_chars:
+                        input_chars.pop()
+                        sys.stdout.write('\b \b')
+                        sys.stdout.flush()
+                elif ord(char) == 27:  # Escape sequence
+                    # 忽略箭头键等特殊字符
+                    sys.stdin.read(2)
+                else:
+                    input_chars.append(char)
+                    sys.stdout.write(char)
                     sys.stdout.flush()
-            elif ord(char) == 27:  # Escape sequence
-                # 忽略箭头键等特殊字符
-                sys.stdin.read(2)
-            else:
-                input_chars.append(char)
-                sys.stdout.write(char)
-                sys.stdout.flush()
-    
-    return ''.join(input_chars)
+        
+        return ''.join(input_chars)
+    except OSError:
+        # Windows系统上select.select与stdin不兼容，使用简单的input()
+        return input(prompt)
 
 
 def main():
