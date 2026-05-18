@@ -109,6 +109,14 @@ def get_system_prompt() -> str:
 当你需要调用工具时，请使用JSON格式输出，格式如下：
 {"tool": "工具名称", "args": {"参数名": "参数值", ...}}
 
+## 工具调用示例
+
+- 列出当前目录内容：{"tool": "list_directory", "args": {"directory": "."}}
+- 创建文件：{"tool": "create_file", "args": {"directory": ".", "file_name": "1.txt", "content": "文件内容..."}}
+- 读取文件：{"tool": "read_file", "args": {"file_path": "./1.txt"}}
+- 重命名文件：{"tool": "rename_file", "args": {"old_path": "./1.txt", "new_name": "2.txt"}}
+- 删除文件：{"tool": "delete_file", "args": {"file_path": "./1.txt"}}
+
 ## 注意事项
 
 - 如果你需要调用工具来完成用户的请求，请输出JSON格式的工具调用
@@ -116,6 +124,7 @@ def get_system_prompt() -> str:
 - **重要：严格按照用户指定的文件名进行操作，不要随意添加或修改文件名**
   - 例如：用户说"将1.txt改为6.txt"，应该使用"1.txt"而不是"file1.txt"
   - 例如：用户说"读取test.txt"，应该使用"test.txt"而不是"file_test.txt"
+- **创建文件时，请使用当前目录"."，不要创建新目录**
 - 在执行文件操作前，建议先使用list_directory工具确认文件是否存在
 - 请确保路径参数使用正确的格式（例如：Windows使用反斜杠，Linux/macOS使用正斜杠）
 - 在执行删除操作前，请确认文件路径正确
